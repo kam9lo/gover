@@ -5,7 +5,7 @@ APP_VERSION ?= $(shell git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.
 
 PACKAGE_NAME ?= github.com/kam9lo/gover
 
-BUILD_LD_FLAGS ?= -ldflags="-X '$(PACKAGE_NAME)/app.Name=$(APP_NAME)' -X '$(PACKAGE_NAME)/app.Version=$(APP_VERSION)'"
+BUILD_LD_FLAGS ?= -ldflags="-X '$(PACKAGE_NAME)/internal.Name=$(APP_NAME)' -X '$(PACKAGE_NAME)/internal.Version=$(APP_VERSION)'"
 
 GOOS ?= linux
 GOARCH ?= amd64

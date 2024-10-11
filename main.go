@@ -36,7 +36,7 @@ func main() {
 		repositoryPath = args[1]
 	}
 
-	app, err := app.New(FlagConfigFile, repositoryPath)
+	app, err := internal.NewApp(FlagConfigFile, repositoryPath)
 	if err != nil {
 		exit(err)
 	}
@@ -102,5 +102,5 @@ $ gover change .
 minor
 
 Create next version tag:
-$ gover tag . $(gover next .)
+$ gover tag .
 `
