@@ -1,5 +1,12 @@
 # Gover
 **_Gover_** is a command line tool designed to help you manage commit messages, repository tags, and versions with ease.
+
+Versioning commands:
+![demo](./assets/gover_command_demo.gif)
+
+Preconfigured commit message prompt:
+![demo](./assets/gover_commit_demo.gif)
+
 ## Configuration
 See gover.yml file:
 ```
