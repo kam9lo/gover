@@ -9,7 +9,7 @@ Preconfigured commit message prompt:
 
 ## Configuration
 See gover.yml file:
-```
+```yaml
 templates:
   # define commit message template
   commit: |
