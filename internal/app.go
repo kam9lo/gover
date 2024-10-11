@@ -1,4 +1,4 @@
-package app
+package internal
 
 import (
 	"bytes"
@@ -24,8 +24,8 @@ type App struct {
 	repo *repository.Repository
 }
 
-// New returns new instance of application.
-func New(cfgPath, repoPath string) (*App, error) {
+// NewApp returns new instance of application.
+func NewApp(cfgPath, repoPath string) (*App, error) {
 	cfg, err := config.NewFromFile(cfgPath)
 	if err != nil {
 		return nil, fmt.Errorf("new config from file: %w", err)
