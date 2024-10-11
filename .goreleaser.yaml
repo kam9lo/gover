@@ -12,7 +12,7 @@ builds:
       - windows
       - darwin
     ldflags:
-      - -s -w -X github.com/kam9lo/gover/app.Version={{.Version}} -X github.com/kam9lo/gover/app.Name=gover
+      - -s -w -X github.com/kam9lo/gover/internal.Version={{.Version}} -X github.com/kam9lo/gover/internal.Name=gover
 
 archives:
   - format: tar.gz
