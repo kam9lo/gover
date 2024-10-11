@@ -1,0 +1,88 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  pull-requests: read
+  contents: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/kam9lo/gover:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GHCR_TOKEN }}
+    env:
+      CURRENT_DIR: ${{ github.workspace }}
+    outputs:
+      tag-name: ${{ steps.tag.outputs.tag-name }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create tag
+        id: tag
+        run: |
+          git config --global --add safe.directory $CURRENT_DIR
+          gover tag .
+          TAG_NAME=$(gover latest .)
+          echo "tag-name=$TAG_NAME" >> $GITHUB_OUTPUT
+          git push origin --tags
+
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    needs: tag
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        env:
+          TAG_NAME: ${{ needs.tag.outputs.tag-name }}
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG_NAME }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+  release:
+    runs-on: ubuntu-latest
+    needs: tag
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: '~> v2'
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHCR_TOKEN }}

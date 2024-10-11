@@ -1,0 +1,47 @@
+templates: # define commit message template
+  commit: |
+    {{.Type}}({{.Scope}}): {{.Message}}
+    {{if (ne .Description "") }}
+    {{.Description}}
+    {{end}}
+    {{- if (ne .Task "") }}
+    Closes #{{.Task}}
+    {{- end}}
+args: # template arguments
+  - name: Type # specification for .Type template field
+    required: true # fail on missing argument
+    options: # display prompt with selection
+      - value: feat! # option to select
+        version: major # impact on versioning
+        description: "backward incompatible changes"
+      - value: feat
+        version: minor
+        description: "backward compatible features"
+      - value: fix
+        version: patch
+        description: "application fixes"
+      - value: perf
+        version: patch
+        description: "performance improvements"
+      - value: refactor
+        version: patch
+        description: "code or architecture refactor"
+      - value: test
+        version: patch
+        description: "application automatic tests"
+      - value: style
+        version: patch
+        description: "content look and formatting"
+      - value: build
+        version: patch
+        description: "application build process"
+      - value: docs # do not affect versioning
+        description: "code documentation"
+      - value: ci
+        description: "continuous integration tooling"
+  - name: Scope # specification for .Scope template field - simple text input
+    required: true
+  - name: Message
+    required: true
+  - name: Description
+  - name: Task

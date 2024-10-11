@@ -1,0 +1,10 @@
+#!/bin/sh
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+SHA1=$3
+
+exec < /dev/tty
+gover -msg-file=$COMMIT_MSG_FILE commit .
+
+exit 0
