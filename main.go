@@ -44,6 +44,8 @@ func main() {
 	switch args[0] {
 	case "version":
 		err = app.Version()
+	case "changelog":
+		err = app.Changelog()
 	case "latest":
 		err = app.LatestTag()
 	case "next":

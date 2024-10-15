@@ -27,7 +27,8 @@ func (o Option) Doc() string {
 // Config contains structure of configuration file.
 type Config struct {
 	Templates struct {
-		Commit string `json:"commit" yaml:"commit" validate:"required"`
+		Commit    string `json:"commit" yaml:"commit" validate:"required"`
+		Changelog string `json:"changelog" yaml:"changelog" validate:"-"`
 	} `json:"templates" yaml:"templates"`
 	Args []struct {
 		Name     string   `json:"name,omitempty" yaml:"name" validate:"required"`
