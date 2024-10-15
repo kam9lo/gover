@@ -26,6 +26,7 @@ jobs:
       CURRENT_DIR: ${{ github.workspace }}
     outputs:
       tag-name: ${{ steps.tag.outputs.tag-name }}
+      changelog: ${{ steps.tag.outputs.changelog }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -40,6 +41,8 @@ jobs:
           gover tag .
           TAG_NAME=$(gover latest .)
           echo "tag-name=$TAG_NAME" >> $GITHUB_OUTPUT
+          CHANGELOG=$(gover changelog .)
+          echo "changelog=$CHANGELOG" >> $GITHUB_OUTPUT
           git push origin --tags
 
   build-and-push-image:
@@ -86,6 +89,8 @@ jobs:
         with:
           distribution: goreleaser
           version: '~> v2'
-          args: release --clean
+          args: release --clean --release-notes <(echo "${{ env.CHANGELOG }}")
         env:
+          CHANGELOG: ${{ needs.tag.outputs.changelog }}
           GITHUB_TOKEN: ${{ secrets.GHCR_TOKEN }}
+

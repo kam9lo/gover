@@ -117,25 +117,55 @@ func (a *App) Change() error {
 func (a *App) Commits() error {
 	commits, err := a.repo.FeatureCommits()
 	if err != nil {
-		return err
+		return fmt.Errorf("feature commits: %w", err)
 	}
-
-	for _, commmit := range commits {
-		if _, err := repository.ParseMessage(
-			a.cfg.Templates.Commit,
-			commmit,
-			a.cfg.RequiredArgs()...,
-		); err != nil {
-			continue
-		}
-		fmt.Println(commmit)
+	for _, commit := range commits {
+		fmt.Println(commit)
 	}
-
 	return nil
 }
 
 func (a *App) Version() error {
 	fmt.Printf("%s %s\n", Name, Version)
+
+	return nil
+}
+
+func (a *App) Changelog() error {
+	if a.cfg.Templates.Changelog == "" {
+		return a.Commits()
+	}
+
+	commits, err := a.featureCommits()
+	if err != nil {
+		return err
+	}
+
+	sortedMessages := map[string]map[string][]repository.Message{}
+	for _, commit := range commits {
+		for field, value := range commit {
+			if sortedMessages[field] == nil {
+				sortedMessages[field] = map[string][]repository.Message{}
+			}
+			sortedMessages[field][value] = append(sortedMessages[field][value], commit)
+		}
+	}
+
+	tmpl, err := template.New("changelog").Parse(a.cfg.Templates.Changelog)
+	if err != nil {
+		return fmt.Errorf("parse template: %w", err)
+	}
+
+	buff := bytes.NewBuffer(nil)
+	if err = tmpl.Execute(buff, sortedMessages); err != nil {
+		return fmt.Errorf(
+			"couldn't execute template\n%s\nwith args:\n%v\n%w",
+			a.cfg.Templates.Changelog, sortedMessages,
+			err,
+		)
+	}
+
+	fmt.Println(buff.String())
 
 	return nil
 }
@@ -165,6 +195,27 @@ func (a *App) Tag(pre string) error {
 		return err
 	}
 	return nil
+}
+
+func (a *App) featureCommits() ([]repository.Message, error) {
+	commits, err := a.repo.FeatureCommits()
+	if err != nil {
+		return nil, err
+	}
+
+	messages := make([]repository.Message, 0, len(commits))
+	for _, commmit := range commits {
+		msg, err := repository.ParseMessage(
+			a.cfg.Templates.Commit,
+			commmit,
+			a.cfg.RequiredArgs()...,
+		)
+		if err != nil {
+			continue
+		}
+		messages = append(messages, msg)
+	}
+	return messages, nil
 }
 
 func (a *App) version(change string, pre string) (string, error) {
