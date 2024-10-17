@@ -20,6 +20,25 @@ templates:
     {{- if (ne .Task "") }}
     Closes #{{.Task}}
     {{- end}}
+  changelog: |
+    {{- if .Type.feat -}}
+    # 🚀 Features:
+      {{- range $commit := .Type.feat}}
+        - {{$commit.Scope}} - {{$commit.Message}}
+      {{- end}}
+    {{ end }}
+    {{- if .Type.fix -}}
+    # 🔧 Fixes:
+      {{- range $commit := .Type.fix}}
+        - {{$commit.Scope}} - {{$commit.Message}}
+      {{- end}}
+    {{ end }}
+    {{- if .Type.docs -}}
+    # 📄 Documentation:
+      {{- range $commit := .Type.docs}}
+        - {{$commit.Scope}} - {{$commit.Message}}
+      {{- end -}}
+    {{- end -}}
 args: # template arguments
   - name: Type # specification for .Type template field
     required: true # fail on missing argument

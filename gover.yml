@@ -11,19 +11,19 @@ templates: # define commit message template
     {{- if .Type.feat -}}
     # 🚀 Features:
       {{- range $commit := .Type.feat}}
-        - [x] {{$commit.Scope}} - {{$commit.Message}}
+        - {{$commit.Scope}} - {{$commit.Message}}
       {{- end}}
     {{ end }}
     {{- if .Type.fix -}}
     # 🔧 Fixes:
       {{- range $commit := .Type.fix}}
-        - [x] {{$commit.Scope}} - {{$commit.Message}}
+        - {{$commit.Scope}} - {{$commit.Message}}
       {{- end}}
     {{ end }}
     {{- if .Type.docs -}}
     # 📄 Documentation:
       {{- range $commit := .Type.docs}}
-        - [x] {{$commit.Scope}} - {{$commit.Message}}
+        - {{$commit.Scope}} - {{$commit.Message}}
       {{- end -}}
     {{- end -}}
 args: # template arguments
