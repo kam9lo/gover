@@ -40,13 +40,14 @@ jobs:
           TAG_NAME=$(gover latest .)
           echo "tag-name=$TAG_NAME" >> $GITHUB_OUTPUT
           git push origin --tags
-          gover changelog . > /changelog.md
+          gover changelog .
+          gover changelog . > changelog.md
 
       - name: Upload changelog artifact
         uses: actions/upload-artifact@v4
         with:
           name: changelog
-          path: /changelog.md
+          path: changelog.md
 
   build-and-push-image:
     runs-on: ubuntu-latest
