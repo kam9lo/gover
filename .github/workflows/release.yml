@@ -45,6 +45,7 @@ jobs:
         id: changelog
         run: |
           gover changelog . > changelog.md
+          cat changelog.md
 
       - name: Upload changelog artifact
         uses: actions/upload-artifact@v3
@@ -97,7 +98,6 @@ jobs:
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         env:
-          CHANGELOG: ${{ needs.tag.outputs.changelog }}
           GITHUB_TOKEN: ${{ secrets.GHCR_TOKEN }}
         with:
           distribution: goreleaser
