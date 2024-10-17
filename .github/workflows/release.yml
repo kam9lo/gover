@@ -42,6 +42,7 @@ jobs:
 
       - name: Create tag
         id: tag
+        continue-on-error: true
         run: |
           git config --global --add safe.directory $CURRENT_DIR
           gover tag .
@@ -58,6 +59,7 @@ jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
     needs: tag
+    if: needs.tag.outputs.tag-name != ''
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -83,6 +85,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     needs: tag
+    if: needs.tag.outputs.tag-name != ''
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
