@@ -32,6 +32,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      # changelog must be made before tag as changelog since newly created tag
+      # will always be empty
+      - name: Create changelog
+        run: |
+          git config --global --add safe.directory $CURRENT_DIR
+          gover changelog . > changelog.md
+          cat changelog.md
+
       - name: Create tag
         id: tag
         run: |
@@ -40,8 +48,6 @@ jobs:
           TAG_NAME=$(gover latest .)
           echo "tag-name=$TAG_NAME" >> $GITHUB_OUTPUT
           git push origin --tags
-          gover changelog .
-          gover changelog . > changelog.md
 
       - name: Upload changelog artifact
         uses: actions/upload-artifact@v4
